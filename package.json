@@ -1,0 +1,10 @@
+{
+  "name": "front-end-learn",
+  "version": "1.0.0",
+  "homepage": "https://github.com/jiandandaoxingfu/front-end-learn",
+  "private": false,
+
+  "scripts": {
+    "deploy": "gh-pages -d ./"
+  }
+}

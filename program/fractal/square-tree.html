@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>方块树</title>
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<style type="text/css">
+		svg {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			transform: rotate(180deg);
+			width: 1200px;
+			height: 600px;
+		}
+	</style>
+</head>
+<body>
+	<svg version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+</body>
+
+<script type="text/javascript">
+/*
+方块分形曲线：给定一个线段AB，以其为边作方块(正方形)ABCD，再给定一个角度a(0~90)，
+以CD为边，做直角三角形CDE，且角CDE=a;
+如下
+
+
+生成元：
+			 E
+			 *
+		   * 	*
+		 *>a	   *
+	  D **************  C
+		*		 	 *
+		*		 	 *
+		*		 	 *
+		*			 *		 	
+		*			 *
+		**************
+		A            B
+分别以DE、EC为边，做方块，继续上述操作。
+*/
+
+function power(x, y) {
+	if(y === 0) {
+		return 1;
+	} else {
+		return power(x, y - 1)*x;
+	}
+}
+
+
+function rotate(AB, alpha) {
+	//线段AB逆时针旋转alpha。
+	let mat = [[Math.cos(alpha), -Math.sin(alpha)], [Math.sin(alpha), Math.cos(alpha)]];
+	return [mat[0][0]*AB[0] + mat[0][1]*AB[1], mat[1][0]*AB[0] + mat[1][1]*AB[1]];
+}
+
+function sum(a, b) {
+	//矩阵相加
+	c = a.slice(0, a.length);
+	a.forEach(function(item, index) {
+		c[index] = item + b[index];
+	})
+	return c;
+}
+
+function minus(a, b) {
+	//矩阵相减
+	c = a.slice(0, a.length);
+	a.forEach(function(item, index) {
+		c[index] = item - b[index];
+	})
+	return c;
+}
+
+//分形
+function square_curve(square, point, alpha){
+	var new_point = [];
+	for(let line of point) {
+		var A = line[0];
+		var B = line[1];
+		var vec = rotate(minus(B, A), Math.PI/2);
+		var C = sum(B, vec);
+		var D = sum(A, vec);
+		var tmp = rotate(minus(C, D), alpha);
+		var E = sum(D, [tmp[0]*Math.cos(alpha), tmp[1]*Math.cos(alpha)]);
+		new_point.push([D, E]);
+		new_point.push([E, C]);
+		square.push([A, B, C, D]);
+	}
+	return [square, new_point];
+}
+
+function calculate(alpha, n) {
+	//用于存储每个方块的四个顶点
+	var square = [];
+	//用于存储每次新生成的线段的两个顶点
+	var point = [[[540, 50], [660, 50]]];
+	// console.log('正在分形...')
+	for(let i=0; i<n; i++) {
+		[square, point] = square_curve(square, point, alpha);
+	}
+	// console.log('已完成')
+	return square;
+}
+
+
+// 图形显示
+function refresh() {
+	document.getElementsByTagName('svg')[0].innerHTML = '<polyline/>'.repeat(power(2, n));
+	var polylines = document.getElementsByTagName('polyline');
+	square.forEach((d, i) => {polylines[i].setAttribute('points', parseFloat(d[0][0].toFixed(3)) + ',' + parseFloat(d[0][1].toFixed(3)) + ' ' + parseFloat(d[1][0].toFixed(3)) + ',' + parseFloat(d[1][1].toFixed(3)) + ' ' + parseFloat(d[2][0].toFixed(3)) + ',' + parseFloat(d[2][1].toFixed(3)) + ' ' + parseFloat(d[3][0].toFixed(3)) + ',' + parseFloat(d[3][1].toFixed(3)));polylines[i].setAttribute('fill', color[i%6])});
+}
+
+var n = 1;
+var alpha = Math.PI/4;
+var square = calculate(alpha, n);
+var color = ['red', 'lime', 'black', 'blue', 'green', 'yellow', 'gray'];
+refresh();
+var curPosX = 650;
+var curPosY = 300;
+var delta = Math.PI/90;
+document.addEventListener('mousemove', function(e) {
+	if(Math.abs(e.screenX - curPosX) > 10) {
+		if(e.screenX - curPosX < -10) {
+			alpha += delta;
+		}else if(e.screenX - curPosX > 10) {
+			alpha -= delta;	
+		}
+		curPosX = e.screenX;
+		square = calculate(alpha, n);
+		refresh();
+	} else if(Math.abs(e.screenY - curPosY) > 50) {
+		if(e.screenY - curPosY < -50) {
+			n += 1;
+			if(n > 12) {
+				n = 12;
+			}
+		}else if(e.screenY - curPosY > 50) {
+			n -= 1;	
+			if(n<1) {
+				n = 1;
+			}
+		}
+		curPosY = e.screenY;
+		square = calculate(alpha, n);
+		refresh();
+	}
+})	
+</script>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<!--
+@author JMx
+date 2017-10-14
+动画:3D相册旋转
+主要用到:视角,旋转,透明度,反射,定位
+-->
+
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>3D-rotate</title>
+		<link rel="stylesheet" href="index.css"/>
+
+	</head>
+	<body>
+		<p id="guide" onselectstart="return false">双击控制展开,单击控制旋转</p>
+		<div id="container">
+			<!-- 坐标轴 -->
+			<svg id='XY'>
+				<line x1="0" y1="0" x2="150" y2="0" style="stroke:red;stroke-width:10"/>
+				<text x="140" y="20" fill="red">X</text>
+				<line x1="0" y1="0" x2="0" y2="150" style="stroke:blue;stroke-width:10"/>
+				<text x="5" y="150" fill="blue">Y</text>
+			</svg>
+			<svg id='Z'>
+				<line x1="0" y1="0" x2="150" y2="0" style="stroke:yellow;stroke-width:10"/>
+				<text x="140" y="20" fill="yellow">Z</text>
+			</svg>
+
+
+			<img src="images/1.jpg" class="image">
+			<img src="images/2.jpg" class="image">
+			<img src="images/3.jpg" class="image">
+			<img src="images/4.jpg" class="image">
+			<img src="images/5.jpg" class="image">
+			<img src="images/6.jpg" class="image">
+			<img src="images/7.jpg" class="image">
+			<img src="images/8.jpg" class="image">
+			<img src="images/9.jpg" class="image">
+		</div>
+
+		<script type="text/javascript" src="../../js/common/rotate3D.js"></script>
+		<script type="text/javascript" src="../../js/common/matrix3.js"></script>
+		<script type="text/javascript" src="../../js/common/Vector3.js"></script>
+		<script type="text/javascript">
+			(function rotate_circle(eles, distance) {
+				//多个元素形成一个圆环
+				let n = eles.length;
+				let degree = 360/n;
+				for (let i=0; i<n; i++) {
+					eles[i].style.transform = "rotateY(" + (i+1) * degree + "deg) translateZ(" + distance +"px)";
+				}
+			})( document.getElementsByClassName('image'), 250);
+
+			var container = document.getElementById('container')
+			rotate3D.init(container).click().mousemove();
+			setTimeout("document.body.firstChild.nextSibling.nextSibling.innerHTML = \"\"", 3000);
+		</script>
+
+	</body>
+</html>
+
+
+
+
+

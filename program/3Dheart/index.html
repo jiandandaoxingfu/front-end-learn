@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+ 	<head>
+  		<meta charset="UTF-8">
+  		<title>3Dheart</title>
+  		<link href="index.css" rel="stylesheet"/>
+  		<script src="../../js/common/classOperator.js" type="text/javasrcipt"></script>
+  	</head>
+  	<body>
+  		<div id="heart">
+          <div class="cube front"></div>
+          <div class="cube behind"></div>
+          <div class="cube left"></div>
+          <div class="cube right"></div>
+          <div class="cube top"></div>
+          <div class="cube bottom"></div>
+  		</div>
+      
+  		<script>
+          var heart = document.getElementById("heart");
+          (function() {
+            //绘制心形曲线
+  			    var curves = 36;
+            var frag = document.createDocumentFragment();
+  			    for ( var i=1; i<=curves; i++ ) {
+  				    var div = document.createElement("div");
+  				    div.setAttribute("class", "heartCurve");
+  				    div.style.transform = "rotateY(" + i*360/curves + "deg) rotateZ(46deg)     translateX(33%)" 
+  				    frag.appendChild(div);
+  			    }
+            heart.appendChild(frag);
+          })();
+  		</script>
+ 	</body>
+</html>

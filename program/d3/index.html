@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<title>d3</title>
+	<style type="text/css">
+      *{
+        margin: 0px;
+        padding: 0px;
+      }
+      div#main {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        margin: auto;
+        height: 90%;
+        width: 90%;
+      }
+
+      svg {
+        cursor: crosshair;
+        border: 2px solid black;
+      }
+
+      path {
+        cursor: crosshair;
+        stroke: gray;
+        stroke-width: 3px;
+      }
+
+      line {
+        cursor: default;
+        stroke: #ccc;
+        stroke-width: 3px;
+      }
+
+      line:hover {
+        stroke: gray;
+      }
+
+      circle {
+        cursor: pointer;
+      }
+
+      circle:hover {
+        stroke: #333;
+        opacity: 0.8;
+      }
+	</style>
+</head>
+<body>
+	<div id='main'></div>
+</body>
+<script type="text/javascript">
+    const main = document.getElementById('main');
+    const WIDTH = main.clientWidth;
+    const HEIGHT = main.clientHeight;
+
+    var svg = d3.select('#main')
+                .append('svg')
+                .attr('width', WIDTH)
+                .attr('height', HEIGHT);
+    var path = svg.append('path');
+
+    var color = d3.scale.category20();
+
+    var nodes = [
+          {id: 0},
+          {id: 1}, 
+          {id: 2},
+          {id: 3}, 
+          {id: 4}
+        ];
+    var nodes_count = nodes.length;
+    var links = [
+          {source: 0, target: 1},
+          {source: 0, target: 2},
+          {source: 1, target: 2},
+          {source: 4, target: 1},
+          {source: 3, target: 0},
+          {source: 2, target: 4},
+          {source: 1, target: 3},
+          {source: 4, target: 3},
+          {source: 0, target: 4},
+          {source: 2, target: 3}
+        ];
+
+    var vertices = svg.append('g').selectAll('circle');
+    var edges = svg.append('g').selectAll('line');
+
+    var force = d3.layout.force()
+        .nodes(nodes) //指定节点数组
+        .links(links) //指定连线数组
+        .gravity(0.12)//重力
+        .charge(-200)//引力
+        .linkDistance(90)//线长
+        .linkStrength(0.9)//线的硬力
+        .chargeDistance(1000)//引力作用范围
+        .size([WIDTH, HEIGHT])
+        .on('tick', tick)
+        .start();
+
+
+    function tick() {
+        edges.attr("x1", function(d) { return d.source.x; })
+             .attr("y1", function(d) { return d.source.y; })
+             .attr("x2", function(d) { return d.target.x; })
+             .attr("y2", function(d) { return d.target.y; }); 
+
+        //更新节点坐标
+        vertices.attr("cx", function(d){ return d.x; })
+            .attr("cy", function(d){ return d.y; });
+    }
+
+    const RADIUS = 10;//节点半径
+
+    function update() {//添加节点或连线后更新
+        vertices = vertices.data(nodes);
+        vertices.enter()
+            .append('circle')
+            .attr('r', RADIUS)
+            .style('fill', function(d) {return color(d.id);})
+            .on('mousedown', beginLine)
+            .on('mouseup', endLine)
+            .on('contextmenu', removeNode);
+        vertices.exit().remove();
+
+        edges = edges.data(links);
+        edges.enter()
+            .append('line')
+            .on('contextmenu', removeLine);
+        edges.exit().remove();
+
+        force.start();
+    }
+
+    update();
+
+    function addNode() {//鼠标点击svg添加节点
+        if(d3.event.button == 0 && d3.event.target.localName == 'svg') {
+            let coords = d3.mouse(this);//在鼠标点击处添加节点
+            nodes.push({x: coords[0], y: coords[1], id: nodes_count ++});
+            update();
+        }
+    }
+
+    function removeNode(d) {//鼠标放在节点上，右键删除节点,还要把节点所在的线删除
+        let index = nodes.indexOf(d);
+        let id = nodes[index].id;
+        nodes.splice(index, 1);
+        links = links.filter(function(d) {
+            return d.target.id !== id && d.source.id !== id;
+        })
+        update();
+    }
+
+    function removeLine(d) {
+        let index = links.indexOf(d);
+        links.splice(index, 1);
+        update();
+    }
+
+    function addLine(node1, node2) { 
+        let index1 = links.indexOf({source: node1, target: node2});
+        let index2 = links.indexOf({source: node2, target: node1});
+        let sum = index1 + index2;
+        let minus = node1.id - node2.id;
+        if(sum == -2 && minus != 0 ) {
+           links.push({source: node1, target: node2}); 
+        }
+    }
+
+    var mousedownNode = null;
+
+    function beginLine(d) {
+        mousedownNode = d;
+        path.attr('d', 'M ' + d.x.toFixed(2) + ' ' + d.y.toFixed(2));
+    }
+
+    function drawLine() {
+        if(mousedownNode != null ) {
+            let d = mousedownNode;
+            path.attr('d', 'M ' + d.x.toFixed(2) + ' ' + d.y.toFixed(2) + ' L' + d3.event.layerX.toFixed(2) + ' ' + d3.event.layerY.toFixed(2) + ' Z');
+        }
+    }
+
+    function endLine(d) {
+        if(mousedownNode == null) return;
+        addLine(mousedownNode, d);
+        mousedownNode = null;
+        update();
+    }
+
+    function hideLine() {
+        mousedownNode = null;
+        path.attr('d', ' ');
+    }
+    
+
+    svg.on("mousedown", addNode)
+        .on("mouseleave", update)
+        .on('contextmenu', function() {return d3.event.preventDefault();})//阻止右键
+        .on('mousemove', drawLine)
+        .on('mouseup', hideLine)
+</script>
+</html>

@@ -1,0 +1,19 @@
+* {
+	margin: 0px;
+	padding: 0px;
+}
+/*box-shadow: h-shadow v-shadow blur spread color inset;
+	依次为水平阴影,垂直阴影,模糊距离,阴影尺寸,颜色,内阴影
+	前两个必选.
+*/
+#chessboard {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	border-radius: 3px;
+	box-shadow: 0 0 5px 4px gray;
+	background-color: #EEE685;
+}

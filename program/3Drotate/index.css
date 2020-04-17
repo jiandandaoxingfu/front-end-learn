@@ -1,0 +1,62 @@
+/**
+ *@author JMx
+ *date 2017-10-14
+ *用于3Drotate页面,用到了定位,旋转,动画,视角,3d
+ */
+*{
+	margin: 0;
+	padding: 0;
+}
+body{
+	background-color: black;
+	overflow: hidden;
+}
+p#guide{
+	margin:150px;
+	font-size: 50px;
+	text-align: center;
+	animation: dis 3s linear;
+}
+@keyframes dis{
+	from{
+		color: lime;
+	}
+	to{
+		color: black;
+	}
+}
+
+div#container{
+	position: absolute;				 
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 300px;
+	height: 300px;
+	margin: auto;	
+	transform-style: preserve-3d;
+	/*background-color: red;*/
+}
+
+svg {
+	position: absolute;				 
+	left: 50%;
+	top: 50%;
+	height: 50%;
+	width: 50%;
+	/*background-color: blue;*/
+}
+svg#Z {
+	transform-origin: top left;
+	transform: rotateY(-90deg);
+}
+.image{
+	position: absolute;
+	top: 25%;
+	left: 35%;
+	width: 30%;
+	height: 50%; 
+	border-radius: 5px;
+	box-shadow: 0px 0px 10px 0px;	
+}

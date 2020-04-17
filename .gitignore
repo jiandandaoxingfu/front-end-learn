@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+*.pem
+
+/build
+
+README - 副本.md

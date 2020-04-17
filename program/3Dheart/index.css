@@ -1,0 +1,83 @@
+ /**
+  *@author JMx
+  *date  2017-10-7
+  *3D学习:定位,border-radius,旋转,平移,3d效果;
+   *居中问题:设置元素高宽以后,
+  *		margin:上右下左;,上会被下覆盖.右被左覆盖
+  *     margin:0 auto;水平居中	
+ */
+
+*{
+	margin: 0px;
+	padding: 0px;
+}
+body{				
+	background-color: black;
+}
+/*心形容器,负责旋转*/
+#heart{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	--height: 200px ;/*心形容器大小.*/
+	height: var(--height);
+	/*css支持自定义变量及计算,value用于六个面的移动, 沿z轴平移量为容器宽度的17.5%*/
+	--value: calc(var(--height)*0.175);/*translateZ无法使用百分比*/
+	width: var(--height);
+	margin: auto;
+	transform-style: preserve-3d;
+	animation: rotate 9s linear infinite;		
+}
+@keyframes rotate {
+	from {
+		transform: rotateX(0deg) rotateY(0deg);
+	} to {
+		transform: rotateX(360deg) rotateY(360deg);
+	}
+}
+/*心形曲线*/
+.heartCurve{
+	position: absolute;
+	top: -6%;		
+	left: 25%;
+	height: 80%;
+	width: 50%;
+	border: 2px solid red;
+	border-radius: 50% 50% 0/40% 50% 0;
+	border-left: 0px;
+	border-bottom: 0px;
+}
+/*立方体*/
+#heart .cube {
+	position: absolute;
+	top: 28%;
+	left: 32%;
+	width: 35%;
+	height: 35%;	
+}
+#heart .front {	
+	transform: translateZ(calc(var(--value)));
+	background-image: url(images/1.jpg);
+}
+#heart .behind {
+	transform: translateZ(calc(var(--value) * -1));
+	background-image: url(images/2.jpg);
+}
+#heart .left {/*绕Y轴旋转后,该元素坐标轴随之改变*/
+	transform: rotateY(90deg) translateZ(calc(var(--value) * -1));
+	background-image: url(images/3.jpg);
+}
+#heart .right {
+	transform: rotateY(90deg) translateZ(calc(var(--value)));
+	background-image: url(images/4.jpg);
+}
+#heart .top {
+	transform: rotateX(90deg) translateZ(calc(var(--value) * -1));
+	background-image: url(images/5.jpg);
+}
+#heart .bottom {
+	transform: rotateX(90deg) translateZ(calc(var(--value)));
+	background-image: url(images/6.jpg);
+}

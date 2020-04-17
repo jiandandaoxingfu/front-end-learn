@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8"/>
+		<title>树叶</title>
+		<style type="text/css">
+			canvas {
+				position: absolute;
+				top: 10;
+				left: 500px;
+
+				transform: rotate(180deg);
+				border: 2px solid black;
+			}
+			svg {
+				position: absolute;
+				top: 10px;
+				left: 30px;
+				transform: rotate(180deg);
+				border: 2px solid black;
+			}
+		</style>			
+	</head>
+	<body>
+		<canvas id="canvas" height="600px" width='360px'></canvas>
+		<svg id="svg" height="600px" width='360px'></svg>	
+	</body>
+	<script type="text/javascript">
+	function alter(A, p) {
+		if( p > 0.99 ) {
+			return [0, 0.16*A[1]];
+		} else if( p > 0.92 ) {
+			return [0.2*A[0] - 0.26*A[1], 0.23*A[0] + 0.22*A[1] + 1.6];
+		} else if( p > 0.85 ) {
+			return [-0.15*A[0] + 0.28*A[1], 0.26*A[0] + 0.24*A[1] + 0.44];
+		} else {
+			return [0.85*A[0] + 0.04*A[1], -0.04*A[0] + 0.85*A[1] + 1.6];
+		}
+	}
+
+	function create_leaf() {
+		var p = Array(n).join(',').split(',').map(value => Math.random());
+		var i = 0;
+		while( i < n ) {
+			leaf.push(alter(leaf[i], p[i]));
+			i = i + 1;
+		}
+	}
+	
+	//绘制图像
+	function draw() {
+		cxt.clearRect(0, 0, WIDTH, HEIGHT);
+		for (let i = 0; i < n; i++) {
+			cxt.beginPath();
+			cxt.arc(60*leaf[i][0] + 180, 60*leaf[i][1], 1, 0, 2*Math.PI);
+			cxt.fillStyle = 'blue';
+			cxt.fill();
+			cxt.closePath();
+		}
+	}
+
+	//绘制图像
+	function draw_svg() {
+		let circles = '';
+		for (let i = 0; i < n; i++) {
+			let cx = 60*leaf[i][0].toFixed(2) + 180;
+			let cy = 60*leaf[i][1].toFixed(2);
+			circles += '<rect x="' + cx +  '" y="' + cy +  '" height="2" width="2" fill="green"/>'
+		}
+		svg.innerHTML = circles;
+	}
+
+	var leaf = [[0, 0]];
+	var n = 5000;
+	const svg = document.getElementById('svg');
+	const canvas = document.getElementById('canvas');
+	const WIDTH = canvas.clientWidth;
+	const HEIGHT = canvas.clientHeight;
+	const cxt = canvas.getContext("2d");
+	create_leaf();
+	draw();
+	draw_svg();
+</script>
+</html>
+
+
+
+

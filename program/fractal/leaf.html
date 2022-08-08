@@ -70,16 +70,25 @@
 		svg.innerHTML = circles;
 	}
 
-	var leaf = [[0, 0]];
-	var n = 5000;
 	const svg = document.getElementById('svg');
 	const canvas = document.getElementById('canvas');
 	const WIDTH = canvas.clientWidth;
 	const HEIGHT = canvas.clientHeight;
 	const cxt = canvas.getContext("2d");
-	create_leaf();
-	draw();
-	draw_svg();
+		
+	let n = 0;
+	let leaf;
+        const run = () => {
+		n += 100;
+		if (n > 10000) return;
+		create_leaf();
+		draw();
+		draw_svg();
+		requestAnimationFrame(run);
+
+	}
+	requestAnimationFrame(run);
+
 </script>
 </html>
 

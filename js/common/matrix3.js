@@ -29,30 +29,30 @@ var matrix3 = {
 			//交换使得对角元素非零
 			if (M[i][i] === 0) {
 				if (i === n - 1) {
-					alert('矩阵不可逆');
+					console.log('矩阵不可逆');
 					return;
 				}
 				let k = i + 1;
 				while (k < n) {
 					if (M[k][i] !== 0) {
-						alternate_row(0, k, M);
+						this.alternate_row(0, k, M);
 					}
 					k = k + 1;
 				}
 			}
 			//使对角元素为1
 			if (M[i][i] !== 1) {
-				row_scale(i, M[i][i], M);
+				this.row_scale(i, M[i][i], M);
 			}
 			//将其下方元素全化为0
 			for (let j = i + 1; j < n; j++) {
-				row_add(-M[j][i], i, j, M);
+				this.row_add(-M[j][i], i, j, M);
 			}
 		}
 		//将左半部份化为单位阵
 		for (let i = 1; i < n; i++) {
 			for (let j = 0; j < i; j++) {
-				row_add(-M[j][i], i, j, M);
+				this.row_add(-M[j][i], i, j, M);
 			}
 		}
 		//右半部份为逆
